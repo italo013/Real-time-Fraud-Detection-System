@@ -13,6 +13,7 @@ class DataUnderstanding(BaseModel):
         metadata (Optional[pd.DataFrame]): Metadata generated from the DataFrame.
         metadata_dtype (Optional[pd.DataFrame]): Metadata about the data types in the DataFrame.
     """
+
     df: pd.DataFrame
     metadata: Optional[pd.DataFrame] = None
     metadata_dtype: Optional[pd.DataFrame] = None
@@ -42,13 +43,15 @@ class DataUnderstanding(BaseModel):
         """
         Generates metadata from the DataFrame and stores it in the metadata and metadata_dtype attributes.
         """
-        df_info = pd.DataFrame({
-            "Not Null": self.df.notnull().sum(),
-            "Null": self.df.isnull().sum(),
-            "Perce Null": self.df.isnull().sum() / len(self.df),
-            "Dtype": self.df.dtypes,
-            "Cardinality": self.df.nunique(),
-        })
+        df_info = pd.DataFrame(
+            {
+                "Not Null": self.df.notnull().sum(),
+                "Null": self.df.isnull().sum(),
+                "Perce Null": self.df.isnull().sum() / len(self.df),
+                "Dtype": self.df.dtypes,
+                "Cardinality": self.df.nunique(),
+            }
+        )
 
         df_dtype = pd.DataFrame(self.df.dtypes.value_counts()).reset_index()
         df_dtype.columns = ["Dtype", "Count"]
@@ -74,9 +77,7 @@ class DataUnderstanding(BaseModel):
         ).format({"Percentage": "{:.2%}"})
 
         display(
-            Markdown(
-                "<H3 style='text-align:left;float:left;'>Dataset Information</H3>"
-            )
+            Markdown("<H3 style='text-align:left;float:left;'>Dataset Information</H3>")
         )
         display(Markdown(f"<H5>{text}</H5>"))
         display(df_info_styled)
